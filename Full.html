@@ -43,8 +43,15 @@
 							<v-flex xs12 sm6 offset-sm3>
 								<v-card>
 									<v-card-text>
-										<v-text-field prepend-icon="edit" name="New Task" label="Anything in mind?" type="text" v-model="newTask.title" v-on:keyup.enter="addTask"
-										 @click="search=''"></v-text-field>
+										<v-text-field 
+											prepend-icon="edit" 
+											name="New Task" 
+											label="Anything in mind?" 
+											type="text" 
+											v-model="newTask.title" 
+											v-on:keyup.enter="addTask"
+											@click="search=''">
+										</v-text-field>
 									</v-card-text>
 								</v-card>
 
@@ -54,58 +61,38 @@
 											<h3>Things on your list</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<!-- <div v-for="(task, index) in filteredTasks" v-if="!task.isCompleted" v-bind:key="`${task.id}`" class="task-list-item">
-												<v-divider></v-divider>
-												<v-list-tile avatar ripple @click="">
-													<v-list-tile-action>
-														<v-icon color="primary" v-on:click="toggleCompletion(index)">check_box_outline_blank</v-icon>
-													</v-list-tile-action>
-													<v-list-tile-content>
-														<v-list-tile-title>{{ task.title }}</v-list-tile-title>
-														<v-list-tile-sub-title class="text--primary">{{ task.description }}</v-list-tile-sub-title>
-														<v-list-tile-sub-title>Created at: {{ task.createdAt.toISOString().slice(0, 10) }}</v-list-tile-sub-title>
-													</v-list-tile-content>
-													<v-list-tile-action>
-														<v-list-tile-action-text></v-list-tile-action-text>
-														<v-btn icon v-on:click="removeTask(index)">
-															<v-icon color="grey lighten-1">delete</v-icon>
-														</v-btn>
-													</v-list-tile-action>
-												</v-list-tile>
-											</div> -->
-											<task-item class="task-list-item" v-for="(task, index) in filteredTasks" v-if="!task.isCompleted" v-bind:key="task.id" v-bind:task="task" v-bind:index="index" v-on:toggle-completion="toggleCompletion($event)"></task-item>
+											<task-item 
+												class="task-list-item" 
+												v-for="(task, index) in filteredTasks" 
+												v-if="!task.isCompleted" 
+												v-bind:key="task.id" 
+												v-bind:task="task"
+												v-bind:index="index" 
+												v-on:toggle-completion="toggleCompletion($event)" 
+												v-on:remove-task="removeTask($event)">
+											</task-item>
 										</transition-group>
 									</v-list>
 								</v-card>
-
 								<v-card class="mt-3">
 									<v-list>
 										<v-subheader>
 											<h3>Things that are done</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<div v-for="(task, index) in filteredTasks" v-if="task.isCompleted" v-bind:key="`${task.id}`" class="task-list-item">
-												<v-divider></v-divider>
-												<v-list-tile avatar ripple @click="">
-													<v-list-tile-action>
-														<v-icon color="primary" v-on:click="toggleCompletion(index)">check_box</v-icon>
-													</v-list-tile-action>
-													<v-list-tile-content>
-														<v-list-tile-title>{{ task.title }}</v-list-tile-title>
-														<v-list-tile-sub-title>Created at: {{ task.createdAt.toISOString().slice(0, 10) }}</v-list-tile-sub-title>
-													</v-list-tile-content>
-													<v-list-tile-action>
-														<v-list-tile-action-text></v-list-tile-action-text>
-														<v-btn icon v-on:click="removeTask(index)">
-															<v-icon color="grey lighten-1">delete</v-icon>
-														</v-btn>
-													</v-list-tile-action>
-												</v-list-tile>
-											</div>
+											<task-item 
+												class="task-list-item" 
+												v-for="(task, index) in filteredTasks" 
+												v-if="task.isCompleted" 
+												v-bind:key="task.id" 
+												v-bind:task="task"
+												v-bind:index="index" 
+												v-on:toggle-completion="toggleCompletion($event)" 
+												v-on:remove-task="removeTask($event)">
+											</task-item>
 										</transition-group>
 									</v-list>
 								</v-card>
-
 							</v-flex>
 						</v-layout>
 					</v-container>
@@ -116,7 +103,6 @@
 			</v-app>
 		</template>
 	</div>
-
 
 
 	<script src="https://unpkg.com/vue/dist/vue.js"></script>
@@ -150,7 +136,7 @@
 						</v-list-tile-content>
 						<v-list-tile-action>
 							<v-list-tile-action-text></v-list-tile-action-text>
-							<v-btn icon v-on:click="removeTask(index)">
+							<v-btn icon v-on:click="$emit('remove-task', index)">
 								<v-icon color="grey lighten-1">delete</v-icon>
 							</v-btn>
 						</v-list-tile-action>
@@ -159,34 +145,9 @@
 			`
 		})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		var app = new Vue({
 			el: '#app',
-			created: function () {
-				// localStorage.removeItem("tasks");
-				if (localStorage.getItem('tasks')) {
-					this.tasks = JSON.parse(localStorage.getItem('tasks'))
-					this.tasks.forEach(function (task) {
-						task.createdAt = new Date(task.createdAt)
-					});
-				} else {
-					this.tasks = sampleTasks
-				}
-			},
+
 			data: {
 				drawer: null,
 				newTask: {
@@ -196,6 +157,7 @@
 				tasks: [],
 				search: ""
 			},
+
 			methods: {
 				addTask() {
 					if (this.newTask.title.trim()) {
@@ -219,13 +181,27 @@
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				}
 			},
+
 			computed: {
 				filteredTasks() {
 					return this.tasks.filter(task => {
 						return task.title.toLowerCase().includes(this.search.toLowerCase())
 					})
 				}
-			}
+			},
+
+			created: function () {
+				// localStorage.removeItem("tasks");
+				if (localStorage.getItem('tasks')) {
+					this.tasks = JSON.parse(localStorage.getItem('tasks'))
+					this.tasks.forEach(function (task) {
+						task.createdAt = new Date(task.createdAt)
+					});
+				} else {
+					this.tasks = sampleTasks
+				}
+			},
+
 		})
 
 		function generateUUID() { // Public Domain/MIT
@@ -240,26 +216,26 @@
 			});
 		}
 	</script>
-</body>
 
+	<style>
+		body {
+			font-family: 'Roboto', sans-serif;
+		}
+	
+		.task-list-item {
+			transition: all .2s;
+		}
+	
+		.task-list-enter,
+		.task-list-leave-to {
+			opacity: 0;
+			transform: translateX(100px);
+		}
+	
+		.task-list-leave-active {
+			position: absolute;
+		}
+	</style>
+</body>
 </html>
 
-<style>
-	body {
-		font-family: 'Roboto', sans-serif;
-	}
-
-	.task-list-item {
-		transition: all .2s;
-	}
-
-	.task-list-enter,
-	.task-list-leave-to {
-		opacity: 0;
-		transform: translateX(100px);
-	}
-
-	.task-list-leave-active {
-		position: absolute;
-	}
-</style>
