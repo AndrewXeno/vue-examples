@@ -127,7 +127,8 @@
 					<v-divider></v-divider>
 					<v-list-tile avatar ripple @click="">
 						<v-list-tile-action>
-							<v-icon color="primary" @click="$emit('toggle-completion', index)">check_box_outline_blank</v-icon>
+							<v-icon color="primary" v-if="!task.isCompleted" @click="$emit('toggle-completion', index)">check_box_outline_blank</v-icon>
+							<v-icon color="primary" v-else @click="$emit('toggle-completion', index)">check_box</v-icon>
 						</v-list-tile-action>
 						<v-list-tile-content>
 							<v-list-tile-title>{{ task.title }}</v-list-tile-title>
