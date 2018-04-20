@@ -43,63 +43,98 @@
 							<v-flex xs12 sm6 offset-sm3>
 								<v-card>
 									<v-card-text>
-										<v-text-field 
-											prepend-icon="edit" 
-											name="New Task" 
-											label="Anything in mind?" 
-											type="text" 
-											v-model="newTask.title" 
-											@keyup.enter="addTask"
-											@click="search=''">
+										<v-text-field prepend-icon="edit" name="title" label="Anything in mind?" type="text" v-model="currentTask.title" @keyup.enter="saveTask"
+										 isUpdate @click="search=''">
 										</v-text-field>
+										<v-layout align-end justify-end>
+											<v-btn color="primary" dark @click.stop="dialog = true" @click="search=''">More Options</v-btn>
+										</v-layout>
 									</v-card-text>
 								</v-card>
 
 								<v-card class="mt-3">
-									<v-list>
+									<v-list two-line>
 										<v-subheader>
 											<h3>Things on your list</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<task-item 
-												class="task-list-item" 
-												v-for="(task, index) in filteredTasks" 
-												v-if="!task.isCompleted" 
-												v-bind:key="task.id" 
-												v-bind:task="task"
-												v-bind:index="index" 
-												@toggle-completion="toggleCompletion($event)" 
-												@remove-task="removeTask($event)">
+											<task-item class="task-list-item" v-for="(task, index) in filteredTasks" v-if="!task.isCompleted" v-bind:key="task.id" v-bind:task="task"
+											 v-bind:index="index" @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(index)">
 											</task-item>
 										</transition-group>
 									</v-list>
 								</v-card>
 								<v-card class="mt-3">
-									<v-list>
+									<v-list two-line>
 										<v-subheader>
 											<h3>Things that are done</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<task-item 
-												class="task-list-item" 
-												v-for="(task, index) in filteredTasks" 
-												v-if="task.isCompleted" 
-												v-bind:key="task.id" 
-												v-bind:task="task"
-												v-bind:index="index" 
-												@toggle-completion="toggleCompletion($event)" 
-												@remove-task="removeTask($event)">
+											<task-item class="task-list-item" v-for="(task, index) in filteredTasks" v-if="task.isCompleted" v-bind:key="task.id" v-bind:task="task"
+											 v-bind:index="index" @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(index)">
 											</task-item>
 										</transition-group>
 									</v-list>
 								</v-card>
 							</v-flex>
+
+							<v-layout row justify-center>
+								<v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+
+									<v-card>
+										<v-toolbar dark color="primary">
+											<v-btn icon @click.native="dialog = false" @click="discard" dark>
+												<v-icon>close</v-icon>
+											</v-btn>
+											<v-toolbar-title>Task Details</v-toolbar-title>
+											<v-spacer></v-spacer>
+											<v-toolbar-items>
+												<v-btn dark flat @click.native="dialog = false" @click="saveTask">Save</v-btn>
+											</v-toolbar-items>
+										</v-toolbar>
+										<v-list three-line subheader>
+											<v-subheader>Task details</v-subheader>
+											<v-list-tile avatar>
+												<v-list-tile-content>
+													<v-text-field name="title" label="Title" type="text" v-model="currentTask.title" @keyup.enter="saveTask" isUpdate @click="search=''">
+													</v-text-field>
+												</v-list-tile-content>
+											</v-list-tile>
+											<v-card-text>
+												<v-checkbox label="Is Completed" v-model="currentTask.isCompleted"></v-checkbox>
+											</v-card-text>
+											<v-card-text>
+												<v-layout row wrap>
+													<v-flex xs12 sm6 md4 class="mr-3">
+														<v-menu ref="dateMenu" lazy :close-on-content-click="false" v-model="dateMenu" transition="scale-transition" offset-y full-width
+														 :nudge-right="40" min-width="290px" :return-value.sync="currentTask.dueDate">
+															<v-text-field slot="activator" label="Due date" v-model="currentTask.dueDate" readonly></v-text-field>
+															<v-date-picker v-model="currentTask.dueDate" @input="$refs.dateMenu.save(currentTask.dueDate)"></v-date-picker>
+														</v-menu>
+													</v-flex>
+													<v-flex xs12 sm6 md4 class="mr-3">
+														<v-menu ref="timeMenu" lazy :close-on-content-click="false" v-model="timeMenu" transition="scale-transition" offset-y full-width
+														 :nudge-right="40" max-width="290px" min-width="290px" :return-value.sync="currentTask.dueTime">
+															<v-text-field slot="activator" label="Due time" v-model="currentTask.dueTime" readonly></v-text-field>
+															<v-time-picker v-model="currentTask.dueTime" format="24hr" @change="$refs.timeMenu.save(currentTask.dueTime)"></v-time-picker>
+														</v-menu>
+													</v-flex>
+												</v-layout>
+											</v-card-text>
+											<v-card-text>
+												<v-text-field name="description" label="Description" multi-line v-model="currentTask.description"></v-text-field>
+											</v-card-text>
+										</v-list>
+										<v-divider></v-divider>
+									</v-card>
+								</v-dialog>
+							</v-layout>
 						</v-layout>
 					</v-container>
 				</v-content>
-				<v-footer color="indigo" app>
+				<!-- <v-footer color="indigo" app>
 					<span class="white--text">&ThinSpace;&copy; 2018</span>
-				</v-footer>
+				</v-footer> -->
 			</v-app>
 		</template>
 	</div>
@@ -107,17 +142,42 @@
 
 	<script src="https://unpkg.com/vue/dist/vue.js"></script>
 	<script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+
 	<script>
+		class Task {
+			constructor() {
+				this.id = ""
+				this.title = ""
+				this.isCompleted = false
+				this.description = ""
+				this.priority = 0
+				this.createdAt = null
+				this.completedAt = null
+				this.dueDate = null
+				this.dueTime = null
+			}
+		}
+
 		var sampleTasks = [{
+			id: "sample-1",
 			title: "Feed the cat",
-			createdAt: new Date(),
 			isCompleted: false,
-			id: 0
+			description: "",
+			priority: 2,
+			createdAt: new Date(),
+			completedAt: null,
+			dueDate: "2018-04-05",
+			dueTime: "06:00"
 		}, {
+			id: "sample-2",
 			title: "Walk the dog",
-			createdAt: new Date(),
 			isCompleted: false,
-			id: 1
+			description: "",
+			priority: 1,
+			createdAt: new Date(),
+			completedAt: null,
+			dueDate: "2018-04-05",
+			dueTime: "07:00"
 		}]
 
 		Vue.component('task-item', {
@@ -130,10 +190,11 @@
 							<v-icon color="primary" v-if="!task.isCompleted" @click="$emit('toggle-completion', index)">check_box_outline_blank</v-icon>
 							<v-icon color="primary" v-else @click="$emit('toggle-completion', index)">check_box</v-icon>
 						</v-list-tile-action>
-						<v-list-tile-content>
+						<v-list-tile-content @click="$emit('open-dialog', index)">
 							<v-list-tile-title>{{ task.title }}</v-list-tile-title>
-							<!-- <v-list-tile-sub-title class="text--primary">{{ task.description }}</v-list-tile-sub-title> -->
-							<v-list-tile-sub-title>Created at: {{ task.createdAt.toISOString().slice(0, 10) }}</v-list-tile-sub-title>
+							<v-list-tile-sub-title v-if="task.description">{{ task.description }}</v-list-tile-sub-title>
+							<v-list-tile-sub-title class="text--primary" v-if="!task.isCompleted && (task.dueDate || task.dueTime)">Due: {{ task.dueDate }} {{ task.dueTime }}</v-list-tile-sub-title>
+							<v-list-tile-sub-title class="text--primary" v-if="task.isCompleted && task.completedAt">Completed at: {{ task.completedAt.toISOString().slice(0, 10) }}</v-list-tile-sub-title>
 						</v-list-tile-content>
 						<v-list-tile-action>
 							<v-list-tile-action-text></v-list-tile-action-text>
@@ -151,35 +212,57 @@
 
 			data: {
 				drawer: null,
-				newTask: {
-					title: "",
-					isCompleted: false
-				},
+				currentTask: new Task(),
 				tasks: [],
-				search: ""
+				search: "",
+				dialog: false,
+				dateMenu: false,
+				timeMenu: false,
+				isEditing: false,
+				editIndex: -1
 			},
 
 			methods: {
-				addTask() {
-					if (this.newTask.title.trim()) {
-						this.newTask.title.trim()
-						this.newTask.createdAt = new Date()
-						this.newTask.id = generateUUID()
-						this.tasks.push(this.newTask)
-						this.newTask = {
-							title: "",
-							isCompleted: false
-						}
+				saveTask() {
+					if (this.editIndex >= 0) {
+						this.tasks[this.editIndex] = Object.assign(this.tasks[this.editIndex], this.currentTask)
+						this.currentTask = new Task()
+						this.editIndex = -1
 						localStorage.setItem('tasks', JSON.stringify(this.tasks))
+					} else {
+						this.currentTask.title = this.currentTask.title.trim()
+						if (this.dialog == true && !this.currentTask.title) {
+							this.currentTask.title = "[Untitled]"
+						}
+						if (this.currentTask.title) {
+							this.currentTask.createdAt = new Date()
+							this.currentTask.id = generateUUID()
+							this.tasks.push(this.currentTask)
+							this.currentTask = new Task()
+							localStorage.setItem('tasks', JSON.stringify(this.tasks))
+						}
 					}
+
 				},
 				removeTask(index) {
 					this.tasks.splice(index, 1)
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
+				discard() {
+					this.currentTask = new Task()
+					if (this.editIndex >= 0) {
+						this.editIndex = -1
+					}
+				},
 				toggleCompletion(index) {
 					this.tasks[index].isCompleted = !this.tasks[index].isCompleted
+					this.tasks[index].completedAt = new Date()
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
+				},
+				openEditDialog(index) {
+					this.dialog = true
+					this.currentTask = Object.assign({}, this.tasks[index])
+					this.editIndex = index
 				}
 			},
 
@@ -197,6 +280,7 @@
 					this.tasks = JSON.parse(localStorage.getItem('tasks'))
 					this.tasks.forEach(function (task) {
 						task.createdAt = new Date(task.createdAt)
+						task.completedAt = new Date(task.completedAt)
 					});
 				} else {
 					this.tasks = sampleTasks
@@ -222,21 +306,21 @@
 		body {
 			font-family: 'Roboto', sans-serif;
 		}
-	
+
 		.task-list-item {
 			transition: all .2s;
 		}
-	
+
 		.task-list-enter,
 		.task-list-leave-to {
 			opacity: 0;
 			transform: translateX(100px);
 		}
-	
+
 		.task-list-leave-active {
 			position: absolute;
 		}
 	</style>
 </body>
-</html>
 
+</html>
