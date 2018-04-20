@@ -191,7 +191,7 @@
 							<v-icon color="primary" v-else @click="$emit('toggle-completion', index)">check_box</v-icon>
 						</v-list-tile-action>
 						<v-list-tile-content @click="$emit('open-dialog', index)">
-							<v-list-tile-title>{{ task.title }}</v-list-tile-title>
+							<v-list-tile-title v-bind:class="{ del: task.isCompleted }">{{ task.title }}</v-list-tile-title>
 							<v-list-tile-sub-title v-if="task.description">{{ task.description }}</v-list-tile-sub-title>
 							<v-list-tile-sub-title class="text--primary" v-if="!task.isCompleted && (task.dueDate || task.dueTime)">Due: {{ task.dueDate }} {{ task.dueTime }}</v-list-tile-sub-title>
 							<v-list-tile-sub-title class="text--primary" v-if="task.isCompleted && task.completedAt">Completed at: {{ task.completedAt.toISOString().slice(0, 10) }}</v-list-tile-sub-title>
@@ -242,7 +242,6 @@
 							localStorage.setItem('tasks', JSON.stringify(this.tasks))
 						}
 					}
-
 				},
 				removeTask(index) {
 					this.tasks.splice(index, 1)
@@ -319,6 +318,10 @@
 
 		.task-list-leave-active {
 			position: absolute;
+		}
+
+		.del {
+			text-decoration: line-through;
 		}
 	</style>
 </body>
