@@ -58,8 +58,8 @@
 											<h3>Things on your list</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<task-item class="task-list-item" v-for="(task, index) in filteredTasks" v-if="!task.isCompleted" v-bind:key="task.id" v-bind:task="task"
-											 v-bind:index="index" @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(index)">
+											<task-item class="task-list-item" v-for="task in filteredTasks" v-if="!task.isCompleted" v-bind:key="task.id" v-bind:task="task"
+											 @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(task)">
 											</task-item>
 										</transition-group>
 									</v-list>
@@ -70,8 +70,8 @@
 											<h3>Things that are done</h3>
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
-											<task-item class="task-list-item" v-for="(task, index) in filteredTasks" v-if="task.isCompleted" v-bind:key="task.id" v-bind:task="task"
-											 v-bind:index="index" @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(index)">
+											<task-item class="task-list-item" v-for="task in filteredTasks" v-if="task.isCompleted" v-bind:key="task.id" v-bind:task="task"
+											 @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(task)">
 											</task-item>
 										</transition-group>
 									</v-list>
@@ -181,16 +181,16 @@
 		}]
 
 		Vue.component('task-item', {
-			props: ["index", "task"],
+			props: ["task"],
 			template: `
 				<div>
 					<v-divider></v-divider>
 					<v-list-tile avatar ripple @click="">
 						<v-list-tile-action>
-							<v-icon color="primary" v-if="!task.isCompleted" @click="$emit('toggle-completion', index)">check_box_outline_blank</v-icon>
-							<v-icon color="primary" v-else @click="$emit('toggle-completion', index)">check_box</v-icon>
+							<v-icon color="primary" v-if="!task.isCompleted" @click="$emit('toggle-completion', task)">check_box_outline_blank</v-icon>
+							<v-icon color="primary" v-else @click="$emit('toggle-completion', task)">check_box</v-icon>
 						</v-list-tile-action>
-						<v-list-tile-content @click="$emit('open-dialog', index)">
+						<v-list-tile-content @click="$emit('open-dialog', task)">
 							<v-list-tile-title v-bind:class="{ del: task.isCompleted }">{{ task.title }}</v-list-tile-title>
 							<v-list-tile-sub-title v-if="task.description">{{ task.description }}</v-list-tile-sub-title>
 							<v-list-tile-sub-title class="text--primary" v-if="!task.isCompleted && (task.dueDate || task.dueTime)">Due: {{ task.dueDate }} {{ task.dueTime }}</v-list-tile-sub-title>
@@ -198,7 +198,7 @@
 						</v-list-tile-content>
 						<v-list-tile-action>
 							<v-list-tile-action-text></v-list-tile-action-text>
-							<v-btn icon @click="$emit('remove-task', index)">
+							<v-btn icon @click="$emit('remove-task', task)">
 								<v-icon color="grey lighten-1">delete</v-icon>
 							</v-btn>
 						</v-list-tile-action>
@@ -212,22 +212,23 @@
 
 			data: {
 				drawer: null,
-				currentTask: new Task(),
-				tasks: [],
-				search: "",
-				dialog: false,
-				dateMenu: false,
-				timeMenu: false,
-				isEditing: false,
-				editIndex: -1
+				currentTask: new Task(),		// store the editing information
+				tasks: [],						// maintain a list of task for the app
+				search: "",						// the searching keyword
+				dialog: false,					// control the show/hide state of the editing dialog
+				dateMenu: false,				// control the show/hide state of the date menu
+				timeMenu: false,				// control the show/hide state of the time menu
+				isEditing: false,				// indicate if is currently editing a task
+				editTask: null					// the reference of the tasking being edited
 			},
 
 			methods: {
+				/** save the current editing task to the data model. */
 				saveTask() {
-					if (this.editIndex >= 0) {
-						this.tasks[this.editIndex] = Object.assign(this.tasks[this.editIndex], this.currentTask)
+					if (this.isEditing) {
+						Object.assign(this.editTask, this.currentTask)
 						this.currentTask = new Task()
-						this.editIndex = -1
+						this.isEditing = false
 						localStorage.setItem('tasks', JSON.stringify(this.tasks))
 					} else {
 						this.currentTask.title = this.currentTask.title.trim()
@@ -243,29 +244,39 @@
 						}
 					}
 				},
-				removeTask(index) {
-					this.tasks.splice(index, 1)
+				/** remove the task from the data model. */
+				removeTask(task) {
+					this.tasks = this.tasks.filter(item => item !== task)
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
+				/** discard any changes currently editing and reset the editing task var. */
 				discard() {
 					this.currentTask = new Task()
-					if (this.editIndex >= 0) {
-						this.editIndex = -1
+					if (this.isEditing) {
+						this.isEditing = false
 					}
 				},
-				toggleCompletion(index) {
-					this.tasks[index].isCompleted = !this.tasks[index].isCompleted
-					this.tasks[index].completedAt = new Date()
+				/** toggle the completion state of the task. */
+				toggleCompletion(task) {
+					task.isCompleted = !task.isCompleted
+					task.completedAt = new Date()
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
-				openEditDialog(index) {
+				/** open the edit dialog for the task. */
+				openEditDialog(task) {
 					this.dialog = true
-					this.currentTask = Object.assign({}, this.tasks[index])
-					this.editIndex = index
+					this.currentTask = Object.assign({}, task)
+					this.isEditing = true
+					this.editTask = task
+				},
+				/** find a task that matches given id. */
+				getTaskById(id) {
+					return this.tasks.find(task => task.id == id)
 				}
 			},
 
 			computed: {
+				/** filter the tasks that match given search keyword in the search var */
 				filteredTasks() {
 					return this.tasks.filter(task => {
 						return task.title.toLowerCase().includes(this.search.toLowerCase())
@@ -287,7 +298,9 @@
 			},
 
 		})
-
+		/** generate unique id for the task 
+			https://stackoverflow.com/a/8809472
+		*/
 		function generateUUID() { // Public Domain/MIT
 			var d = new Date().getTime();
 			if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
