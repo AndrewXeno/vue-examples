@@ -276,10 +276,10 @@
 			},
 
 			computed: {
-				/** filter the tasks that match given search keyword in the search var */
+				/** filter the tasks that the title or description contains given search keyword in the search var */
 				filteredTasks() {
 					return this.tasks.filter(task => {
-						return task.title.toLowerCase().includes(this.search.toLowerCase())
+						return task.title.toLowerCase().includes(this.search.toLowerCase()) || task.description.toLowerCase().includes(this.search.toLowerCase())
 					})
 				}
 			},
