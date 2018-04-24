@@ -263,11 +263,7 @@
 				},
 				/** save the completion date when user click in the dialog. */
 				updateCompletionTime: function() {
-					if (this.isEditing) {
-						this.editTask.completedAt = new Date()
-					} else {
-						this.currentTask.completedAt = new Date()
-					}
+					this.currentTask.completedAt = new Date()
 				},
 				/** open the edit dialog for the task. */
 				openEditDialog: function(task) {
