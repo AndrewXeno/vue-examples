@@ -43,8 +43,7 @@
 							<v-flex xs12 sm6 offset-sm3>
 								<v-card>
 									<v-card-text>
-										<v-text-field prepend-icon="edit" name="title" label="Anything in mind?" type="text" v-model="currentTask.title" @keyup.enter="saveTask"
-										 isUpdate @click="search=''">
+										<v-text-field prepend-icon="edit" name="title" label="Anything in mind?" type="text" v-model="currentTask.title" @keyup.enter="saveTask" @click="search=''">
 										</v-text-field>
 										<v-layout align-end justify-end>
 											<v-btn color="primary" dark @click.stop="dialog = true" @click="search=''">More Options</v-btn>
@@ -96,12 +95,12 @@
 											<v-subheader>Task details</v-subheader>
 											<v-list-tile avatar>
 												<v-list-tile-content>
-													<v-text-field name="title" label="Title" type="text" v-model="currentTask.title" @keyup.enter="saveTask" isUpdate @click="search=''">
+													<v-text-field name="title" label="Title" type="text" v-model="currentTask.title" @click="search=''">
 													</v-text-field>
 												</v-list-tile-content>
 											</v-list-tile>
 											<v-card-text>
-												<v-checkbox label="Is Completed" v-model="currentTask.isCompleted"></v-checkbox>
+												<v-checkbox label="Is Completed" v-model="currentTask.isCompleted" @click.native="updateCompletionTime()"></v-checkbox>
 											</v-card-text>
 											<v-card-text>
 												<v-layout row wrap>
@@ -224,7 +223,7 @@
 
 			methods: {
 				/** save the current editing task to the data model. */
-				saveTask() {
+				saveTask: function() {
 					if (this.isEditing) {
 						Object.assign(this.editTask, this.currentTask)
 						this.currentTask = new Task()
@@ -245,32 +244,40 @@
 					}
 				},
 				/** remove the task from the data model. */
-				removeTask(task) {
+				removeTask: function(task) {
 					this.tasks = this.tasks.filter(item => item !== task)
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
 				/** discard any changes currently editing and reset the editing task var. */
-				discard() {
+				discard: function() {
 					this.currentTask = new Task()
 					if (this.isEditing) {
 						this.isEditing = false
 					}
 				},
 				/** toggle the completion state of the task. */
-				toggleCompletion(task) {
+				toggleCompletion: function(task) {
 					task.isCompleted = !task.isCompleted
 					task.completedAt = new Date()
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
+				/** save the completion date when user click in the dialog. */
+				updateCompletionTime: function() {
+					if (this.isEditing) {
+						this.editTask.completedAt = new Date()
+					} else {
+						this.currentTask.completedAt = new Date()
+					}
+				},
 				/** open the edit dialog for the task. */
-				openEditDialog(task) {
+				openEditDialog: function(task) {
 					this.dialog = true
 					this.currentTask = Object.assign({}, task)
 					this.isEditing = true
 					this.editTask = task
 				},
 				/** find a task that matches given id. */
-				getTaskById(id) {
+				getTaskById: function(id) {
 					return this.tasks.find(task => task.id == id)
 				}
 			},
