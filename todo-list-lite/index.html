@@ -58,7 +58,7 @@
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
 											<task-item class="task-list-item" v-for="task in filteredTasks" v-if="!task.isCompleted" v-bind:key="task.id" v-bind:task="task"
-											 @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(task)">
+											 @toggle-completion="toggleCompletion(task)" @remove-task="removeTask(task)" @open-dialog="openEditDialog">
 											</task-item>
 										</transition-group>
 									</v-list>
@@ -70,7 +70,7 @@
 										</v-subheader>
 										<transition-group name="task-list" tag="div" class="task-list">
 											<task-item class="task-list-item" v-for="task in filteredTasks" v-if="task.isCompleted" v-bind:key="task.id" v-bind:task="task"
-											 @toggle-completion="toggleCompletion($event)" @remove-task="removeTask($event)" @open-dialog="openEditDialog(task)">
+											 @toggle-completion="toggleCompletion(task)" @remove-task="removeTask(task)" @open-dialog="openEditDialog">
 											</task-item>
 										</transition-group>
 									</v-list>
