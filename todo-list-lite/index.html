@@ -136,6 +136,11 @@
 						</v-layout>
 					</v-container>
 				</v-content>
+				<v-snackbar :timeout="snackbar.timeout" :top="snackbar.y === 'top'" :bottom="snackbar.y === 'bottom'" :right="snackbar.x === 'right'"
+				 :left="snackbar.x === 'left'" :multi-line="snackbar.mode === 'multi-line'" :vertical="snackbar.mode === 'vertical'" v-model="snackbar.state">
+					{{ snackbar.text }}
+					<v-btn flat color="pink" @click.native="snackbar.state = false">Close</v-btn>
+				</v-snackbar>
 				<!-- <v-footer color="indigo" app>
 					<span class="white--text">&ThinSpace;&copy; 2018</span>
 				</v-footer> -->
@@ -223,28 +228,39 @@
 				dateMenu: false,				// control the show/hide state of the date menu
 				timeMenu: false,				// control the show/hide state of the time menu
 				isEditing: false,				// indicate if is currently editing a task
-				editTask: null					// the reference of the tasking being edited
+				editTask: null,					// the reference of the tasking being edited
+				snackbar: {
+					state: false,
+					y: 'bottom',
+					x: null,
+					mode: '',
+					timeout: 2000,
+					text: ''
+				}
 			},
 
 			methods: {
 				/** save the current editing task to the data model. */
 				saveTask: function () {
+					this.currentTask.title = this.currentTask.title.trim()
+					if (this.dialog == true && !this.currentTask.title) {
+						this.currentTask.title = "[Untitled]"
+					}
 					if (this.isEditing) {
 						Object.assign(this.editTask, this.currentTask)
-						this.currentTask = new Task()
 						this.isEditing = false
 						localStorage.setItem('tasks', JSON.stringify(this.tasks))
+						this.showSnackbar(`Task "${this.currentTask.title}" is updated.`)
+						this.currentTask = new Task()
 					} else {
-						this.currentTask.title = this.currentTask.title.trim()
-						if (this.dialog == true && !this.currentTask.title) {
-							this.currentTask.title = "[Untitled]"
-						}
+						
 						if (this.currentTask.title) {
 							this.currentTask.createdAt = new Date()
 							this.currentTask.id = generateUUID()
 							this.tasks.push(this.currentTask)
-							this.currentTask = new Task()
 							localStorage.setItem('tasks', JSON.stringify(this.tasks))
+							this.showSnackbar(`Task "${this.currentTask.title}" is saved.`)
+							this.currentTask = new Task()
 						}
 					}
 				},
@@ -280,6 +296,11 @@
 				/** find a task that matches given id. */
 				getTaskById: function (id) {
 					return this.tasks.find(task => task.id == id)
+				},
+				/** show a snackbar with given message. */
+				showSnackbar: function (message) {
+					this.snackbar.text = message
+					this.snackbar.state = true
 				}
 			},
 
