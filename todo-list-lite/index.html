@@ -43,7 +43,8 @@
 							<v-flex xs12 sm6 offset-sm3>
 								<v-card>
 									<v-card-text>
-										<v-text-field prepend-icon="edit" name="title" label="Anything in mind?" type="text" v-model="currentTask.title" @keyup.enter="saveTask" @click="search=''">
+										<v-text-field prepend-icon="edit" name="title" label="Anything in mind?" type="text" v-model="currentTask.title" @keyup.enter="saveTask"
+										 @click="search=''">
 										</v-text-field>
 										<v-layout align-end justify-end>
 											<v-btn color="primary" dark @click.stop="dialog = true" @click="search=''">More Options</v-btn>
@@ -91,40 +92,44 @@
 												<v-btn dark flat @click.native="dialog = false" @click="saveTask">Save</v-btn>
 											</v-toolbar-items>
 										</v-toolbar>
-										<v-list three-line subheader>
-											<v-subheader>Task details</v-subheader>
-											<v-list-tile avatar>
-												<v-list-tile-content>
-													<v-text-field name="title" label="Title" type="text" v-model="currentTask.title" @click="search=''">
-													</v-text-field>
-												</v-list-tile-content>
-											</v-list-tile>
-											<v-card-text>
-												<v-checkbox label="Is Completed" v-model="currentTask.isCompleted" @click.native="updateCompletionTime()"></v-checkbox>
-											</v-card-text>
-											<v-card-text>
+										<v-flex xs12 sm6 offset-sm3>
+											<v-list three-line subheader>
+												<v-subheader>Task details</v-subheader>
+												<v-list-tile avatar>
+													<v-list-tile-content>
+														<v-text-field name="title" label="Title" type="text" v-model="currentTask.title" @click="search=''">
+														</v-text-field>
+													</v-list-tile-content>
+												</v-list-tile>
+												<v-card-text>
+													<v-checkbox label="Is Completed" v-model="currentTask.isCompleted" @click.native="updateCompletionTime()"></v-checkbox>
+												</v-card-text>
 												<v-layout row wrap>
-													<v-flex xs12 sm6 md4 class="mr-3">
-														<v-menu ref="dateMenu" lazy :close-on-content-click="false" v-model="dateMenu" transition="scale-transition" offset-y full-width
-														 :nudge-right="40" min-width="290px" :return-value.sync="currentTask.dueDate">
-															<v-text-field slot="activator" label="Due date" v-model="currentTask.dueDate" readonly></v-text-field>
-															<v-date-picker v-model="currentTask.dueDate" @input="$refs.dateMenu.save(currentTask.dueDate)"></v-date-picker>
-														</v-menu>
+													<v-flex xs12 sm6 md6>
+														<v-card-text>
+															<v-menu ref="dateMenu" lazy :close-on-content-click="false" v-model="dateMenu" transition="scale-transition" offset-y full-width
+															 :nudge-right="40" min-width="290px" :return-value.sync="currentTask.dueDate">
+																<v-text-field slot="activator" label="Due date" v-model="currentTask.dueDate" readonly></v-text-field>
+																<v-date-picker v-model="currentTask.dueDate" @input="$refs.dateMenu.save(currentTask.dueDate)"></v-date-picker>
+															</v-menu>
+														</v-card-text>
 													</v-flex>
-													<v-flex xs12 sm6 md4 class="mr-3">
-														<v-menu ref="timeMenu" lazy :close-on-content-click="false" v-model="timeMenu" transition="scale-transition" offset-y full-width
-														 :nudge-right="40" max-width="290px" min-width="290px" :return-value.sync="currentTask.dueTime">
-															<v-text-field slot="activator" label="Due time" v-model="currentTask.dueTime" readonly></v-text-field>
-															<v-time-picker v-model="currentTask.dueTime" format="24hr" @change="$refs.timeMenu.save(currentTask.dueTime)"></v-time-picker>
-														</v-menu>
+													<v-flex xs12 sm6 md6>
+														<v-card-text>
+															<v-menu ref="timeMenu" lazy :close-on-content-click="false" v-model="timeMenu" transition="scale-transition" offset-y full-width
+															 :nudge-right="40" max-width="290px" min-width="290px" :return-value.sync="currentTask.dueTime">
+																<v-text-field slot="activator" label="Due time" v-model="currentTask.dueTime" readonly></v-text-field>
+																<v-time-picker v-model="currentTask.dueTime" format="24hr" @change="$refs.timeMenu.save(currentTask.dueTime)"></v-time-picker>
+															</v-menu>
+														</v-card-text>
 													</v-flex>
 												</v-layout>
-											</v-card-text>
-											<v-card-text>
-												<v-text-field name="description" label="Description" multi-line v-model="currentTask.description"></v-text-field>
-											</v-card-text>
-										</v-list>
-										<v-divider></v-divider>
+												<v-card-text>
+													<v-text-field name="description" label="Description" multi-line v-model="currentTask.description"></v-text-field>
+												</v-card-text>
+											</v-list>
+											<v-divider></v-divider>
+										</v-flex>
 									</v-card>
 								</v-dialog>
 							</v-layout>
@@ -223,7 +228,7 @@
 
 			methods: {
 				/** save the current editing task to the data model. */
-				saveTask: function() {
+				saveTask: function () {
 					if (this.isEditing) {
 						Object.assign(this.editTask, this.currentTask)
 						this.currentTask = new Task()
@@ -244,36 +249,36 @@
 					}
 				},
 				/** remove the task from the data model. */
-				removeTask: function(task) {
+				removeTask: function (task) {
 					this.tasks = this.tasks.filter(item => item !== task)
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
 				/** discard any changes currently editing and reset the editing task var. */
-				discard: function() {
+				discard: function () {
 					this.currentTask = new Task()
 					if (this.isEditing) {
 						this.isEditing = false
 					}
 				},
 				/** toggle the completion state of the task. */
-				toggleCompletion: function(task) {
+				toggleCompletion: function (task) {
 					task.isCompleted = !task.isCompleted
 					task.completedAt = new Date()
 					localStorage.setItem('tasks', JSON.stringify(this.tasks))
 				},
 				/** save the completion date when user click in the dialog. */
-				updateCompletionTime: function() {
+				updateCompletionTime: function () {
 					this.currentTask.completedAt = new Date()
 				},
 				/** open the edit dialog for the task. */
-				openEditDialog: function(task) {
+				openEditDialog: function (task) {
 					this.dialog = true
 					this.currentTask = Object.assign({}, task)
 					this.isEditing = true
 					this.editTask = task
 				},
 				/** find a task that matches given id. */
-				getTaskById: function(id) {
+				getTaskById: function (id) {
 					return this.tasks.find(task => task.id == id)
 				}
 			},
