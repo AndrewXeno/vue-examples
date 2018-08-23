@@ -1,0 +1,67 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <input v-model.trim="newTaskTitle" v-on:keyup.enter="addTask">
+  <div>
+    <h4>To Do: </h4>
+    <task-item 
+      v-for="task in tasks" 
+      v-if="!task.isCompleted" 
+      :title="task.title" 
+      :id="task.id" 
+      :is-completed="task.isCompleted"
+    ></task-item>
+  </div>
+  <div>
+    <h4>Done: </h4>
+    <task-item 
+      v-for="task in tasks" 
+      v-if="task.isCompleted" 
+      :title="task.title" 
+      :id="task.id" 
+      :is-completed="task.isCompleted"
+    ></task-item>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  Vue.component('task-item', {
+    props: ['title', 'id', 'isCompleted'],
+    template: `
+      <div>
+        <span v-if="!isCompleted">{{ title }}</span>
+        <span v-else><del>{{ title }}</del></span>
+      </div>
+    `
+  })
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      newTaskTitle: '',
+      tasks: [
+        {
+          title: 'Feed the cat',
+          isCompleted: false,
+          id: 0
+        },
+        {
+          title: 'Walk the dog',
+          isCompleted: true,
+          id: 1
+        },
+      ]
+    },
+    methods: {
+      addTask: function () {
+        if (this.newTaskTitle == '') return
+        this.tasks.push({
+          title: this.newTaskTitle,
+          isCompleted: false,
+          id: this.tasks.length
+        })
+        this.newTaskTitle = ''
+      }
+    }
+  })
+</script>

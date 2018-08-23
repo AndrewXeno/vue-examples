@@ -1,0 +1,40 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <task-item 
+    v-for="task in tasks" 
+    v-bind:title="task.title" 
+    v-bind:id="task.id"
+    v-bind:is-completed="task.isCompleted"
+  ></task-item>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  Vue.component('task-item', {
+    props: ['title', 'id', 'isCompleted'],
+    template: `
+      <div>
+        <span v-if="!isCompleted">{{ title }}</span>
+        <span v-else><del>{{ title }}</del></span>
+      </div>
+    `
+  })
+
+  var app = new Vue({
+    el: '#app',
+    data: {
+      tasks: [
+        {
+          title: 'Feed the cat',
+          isCompleted: false,
+          id: 0
+        },
+        {
+          title: 'Walk the dog',
+          isCompleted: true,
+          id: 1
+        },
+      ]
+    }
+  })
+</script>

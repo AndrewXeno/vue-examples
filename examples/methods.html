@@ -1,0 +1,20 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <h1>My guests</h1>
+  <p> {{ getSortedGuestList() }}</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      guests: ['Bob', 'David', 'Alice', 'Carol']
+    },
+    methods: {
+        getSortedGuestList: function(){
+            return this.guests.sort().toString()
+        }
+    }
+  })
+</script>

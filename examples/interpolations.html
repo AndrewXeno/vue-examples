@@ -1,0 +1,18 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <p>Double curly braces treat HTML as plain text: {{ rawHtml }}</p>
+  <p>Using v-html directive: <span v-html="rawHtml">Contents inside will be ignored</span></p>
+  <p v-once>This will not be updated: {{ rawHtml }}</p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      rawHtml: '<h1>This should be a heading</h1>',
+      dynamicId: 'someDynamicId',
+    }
+  })
+</script>

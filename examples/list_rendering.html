@@ -1,0 +1,39 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <h4>Iterate through an array:</h4>
+  <ul>
+    <li v-for="item in listItems">
+      {{ item.title }}
+    </li>
+  </ul>
+
+  <h4>Iterate through an object:</h4>
+  <ul>
+    <li v-for="(value, key) in taskObject">
+      {{ key }}: {{ value }}
+    </li>
+  </ul>
+
+  <h4>Iterate through numbers</h4>
+  <!-- it starts from 1... -->
+  <span v-for="i in 10">{{ i }}, </span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      listItems: [
+        { title: 'feed the cat' },
+        { title: 'walk the dog' }
+      ],
+      taskObject: {
+        title: "feed the cat",
+        createdAt: "2018-08-20",
+        dueDate: "2018-08-24",
+        priority: "high"
+      }
+    }
+  })
+</script>

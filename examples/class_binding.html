@@ -1,0 +1,27 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <!-- Object Syntax -->
+  <div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }">1</div>
+  <div class="static" v-bind:class="classObject">2</div>
+  <!-- Array Syntax -->
+  <div v-bind:class="[activeClass, errorClass]">3</div>
+  <div v-bind:class="classArray">4</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      isActive: true,
+      hasError: false,
+      classObject: {
+        active: true,
+        'text-danger': false
+      },
+      activeClass: 'active',
+      errorClass: 'text-danger',
+      classArray: ['active', 'text-danger']
+    }
+  })
+</script>

@@ -1,0 +1,44 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <p>Counter Value: {{ counter }}</p>
+
+  <!-- Inline JavaScript -->
+  <p><button v-on:click="counter += 1">Add 1</button></p>
+
+  <!-- Call a method using the name -->
+  <p><button v-on:click="addTwo">Add 2</button></p>
+
+  <!-- Access the DOM event -->
+  <p><button v-on:click="showEvent">Show Event</button></p>
+
+  <!-- Use methods in an inline JavaScript statement -->
+  <p><button v-on:click="log('Something')">Log Something</button></p>
+
+  <!-- Access the DOM event in an inline statement handler using $event var-iable -->
+  <p><button v-on:click="logEvent('Something', $event)">Log Something & event</button></p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      counter: 0
+    },
+    methods: {
+      addTwo: function () {
+        this.counter += 2
+      },
+      showEvent: function (event) {
+        console.log(event)
+      },
+      log: function (message) {
+        console.log(message)
+      },
+      logEvent: function (message, event) {
+        console.log(message)
+        console.log(event)
+      }
+    }
+  })
+</script>

@@ -1,0 +1,37 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app" style="zoom: 2">
+  <p>R:
+    <input type="range" min="0" max="255" v-model:value="red" class="slider">
+    <input v-model="red" style="width:30px;">
+  </p>
+  <p>G:
+    <input type="range" min="0" max="255" v-model:value="green" class="slider">
+    <input v-model="green" style="width:30px;">
+  </p>
+  <p>B:
+    <input type="range" min="0" max="255" v-model:value="blue" class="slider">
+    <input v-model="blue" style="width:30px;">
+  </p>
+  <p>HEX: {{ hexValue }}</p>
+  <div style="width:200px; height:200px;" v-bind:style="{ backgroundColor: hexValue }"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  var app = new Vue({
+    el: '#app',
+    data: {
+      red: 0,
+      green: 0,
+      blue: 0
+    },
+    computed: {
+      hexValue: function () {
+        red = ('0' + Number(this.red).toString(16)).slice(-2)
+        green = ('0' + Number(this.green).toString(16)).slice(-2)
+        blue = ('0' + Number(this.blue).toString(16)).slice(-2)
+        return '#' + (red + green + blue).toUpperCase()
+      }
+    }
+  })
+</script>

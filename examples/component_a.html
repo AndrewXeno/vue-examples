@@ -1,0 +1,22 @@
+<link href="./styles.css" rel="stylesheet">
+<div id="app">
+  <task-item></task-item>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  Vue.component('task-item', {
+    data: function () {
+      return {
+        title: 'Feed the cat'
+      }
+    },
+    template: `
+      <div>
+        <p>{{ title }}</p>
+      </div>
+    `
+  })
+
+  var app = new Vue({ el: '#app' })
+</script>
