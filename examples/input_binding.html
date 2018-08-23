@@ -1,49 +1,61 @@
 <link href="./styles.css" rel="stylesheet">
 <div id="app">
-  <p>Text Field: 
+  <div>Text Field: 
     <input v-model="textField">
-    Data: {{textField}}
-  </p>
-  <p>Text Area: 
+    <p style="color:blue">Data: {{textField}}</p>
+  </div>
+  <br/>
+
+  <div>Text Area: 
     <textarea v-model="textArea"></textarea>
-    Data: {{textArea}}
-  </p>
-  <p>Single Checkbox: 
+    <p style="color:blue">Data: {{textArea}}</p>
+  </div>
+  <br/>
+
+  <div>Single Checkbox: 
     <input type="checkbox" v-model="singleCheckbox">
-    Data: {{singleCheckbox}}
-  </p>
-  <p>Multiple Checkboxes: 
+    <p style="color:blue">Data: {{singleCheckbox}}</p>
+  </div>
+  <br/>
+
+  <div>Multiple Checkboxes: 
     <input type="checkbox" id="alice" value="Alice" v-model="multipleCheckboxes">
     <label for="alice">Alice</label>
     <input type="checkbox" id="bob" value="Bob" v-model="multipleCheckboxes">
     <label for="bob">Bob</label>
     <input type="checkbox" id="carol" value="Carol" v-model="multipleCheckboxes">
     <label for="carol">Carol</label>
-    Data: {{multipleCheckboxes}}
-  </p>
-  <p>Radio Button: 
+    <p style="color:blue">Data: {{multipleCheckboxes}}</p>
+  </div>
+  <br/>
+
+  <div>Radio Button: 
     <input type="radio" id="one" value="One" v-model="radioButton">
     <label for="one">One</label>
     <input type="radio" id="two" value="Two" v-model="radioButton">
     <label for="two">Two</label>
-    Data: {{radioButton}}
-  </p>
-  <p>Single Select List: 
+    <p style="color:blue">Data: {{radioButton}}</p>
+  </div>
+  <br/>
+
+  <div>Single Select List: 
     <select v-model="singleList">
       <option>A</option>
       <option>B</option>
       <option>C</option>
     </select>
-    Data: {{singleList}}
-  </p>
-  <p>Multiple Select List: 
+    <p style="color:blue">Data: {{singleList}}</p>
+  </div>
+  <br/>
+
+  <div>Multiple Select List: 
     <select v-model="multipleList" multiple>
       <option>A</option>
       <option>B</option>
       <option>C</option>
     </select>
-    Data: {{multipleList}}
-  </p>
+    <p style="color:blue">Data: {{multipleList}}</p>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
